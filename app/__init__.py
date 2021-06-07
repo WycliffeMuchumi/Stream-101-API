@@ -1,7 +1,62 @@
 from flask import Flask
+from importlib import import_module
+from flask_sqlalchemy import SQLAlchemy
+from hvac import Client as vaultClient
 
 
-app = Flask(__name__)
+
+db = SQLAlchemy(session_options={'expire_on_commit' : False})
 
 
-from app.api.views import views
+
+"""
+    Registering Blueprints
+"""
+
+def register_blueprints(app):
+    blueprints = (
+        'admin',
+        'channels',
+        'users',
+        'videos'
+    )
+
+    for blueprint in blueprints:
+        module = import_module(f'api.{blueprint}')
+        app.register_blueprints(module.blueprint)
+        print("==> blueprint for {} is registered !".format(blueprint))
+
+"""
+    Creting our client vaults
+"""
+def create_vault_client(app):
+    return vaultClient(
+        url = app.config.config('VAULT_ADDR'),
+        token = app.config.config('VAULT_TOKEN')
+    )
+
+
+"""
+    Configuring Database
+"""
+def configure_database(app):
+    @app.before_first_request
+    def create_default():
+        db.create_all()
+       # db.drop_all()
+
+"""
+    Creating Application
+"""
+
+def create_app(path, config):
+    app = Flask(__name__, static_folder='api/static')
+    app.config.from_object(config.config)
+    app.production = not app.config['DEBUG']
+    app.path = path
+    register_blueprints(app)
+    configure_database(app)
+    if app.production:
+        app.vault_client = create_vault_client(app)
+    return app
+    
