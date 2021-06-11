@@ -11,8 +11,9 @@ try:
     config_mode = app_config_dict[get_config_mode.capitalize()]
 except KeyError:
     exit('Invalid Configuration Mode!')
-
-app = create_app(Path.cwd, config_mode)
+    
+# path.abspath(path.dirname(__file__))
+app = create_app(Path.cwd(), config_mode)
 db.init_app(app)
 
 if __name__ == '__main__':

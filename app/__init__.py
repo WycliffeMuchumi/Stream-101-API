@@ -16,6 +16,7 @@ db = SQLAlchemy(session_options={'expire_on_commit' : False})
 def register_blueprint(app):
     blueprints = (
         'admin',
+        'base',
         'channels',
         'users',
         'videos'
