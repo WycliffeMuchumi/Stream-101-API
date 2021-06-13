@@ -1,12 +1,24 @@
 from flask import Flask
 from importlib import import_module
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_marshmallow import Marshmallow
 from hvac import Client as vaultClient
-
 
 
 db = SQLAlchemy(session_options={'expire_on_commit' : False})
 
+"""
+    Initializing Bcrypt
+"""
+
+bcrypt = Bcrypt()
+
+"""
+    Initializing Marshmallow
+"""
+
+ma = Marshmallow()
 
 
 """
@@ -28,23 +40,27 @@ def register_blueprint(app):
         print("==> blueprint for {} is registered !".format(blueprint))
 
 """
-    Creting our client vaults
+    Creating our client vaults
 """
+
 def create_vault_client(app):
     return vaultClient(
         url = app.config.config('VAULT_ADDR'),
         token = app.config.config('VAULT_TOKEN')
     )
 
+from app.api.users.models.users import User
 
 """
     Configuring Database
 """
+
 def configure_database(app):
     @app.before_first_request
     def create_default():
         db.create_all()
-       # db.drop_all()
+        # db.drop_all()
+        User.metadata.create_all(bind=db.engine)
 
 """
     Creating Our Application Factory
@@ -60,4 +76,6 @@ def create_app(path, config):
     if app.production:
         app.vault_client = create_vault_client(app)
     return app
-    
+
+
+
