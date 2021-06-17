@@ -50,6 +50,7 @@ def create_vault_client(app):
     )
 
 from app.api.users.models.users import User
+from app.api.users.models.fakedata import fake_data
 
 """
     Configuring Database
@@ -61,6 +62,8 @@ def configure_database(app):
         db.create_all()
         # db.drop_all()
         User.metadata.create_all(bind=db.engine)
+        # Generating the number of records we want for our fake_data function
+        fake_data(100)
 
 """
     Creating Our Application Factory

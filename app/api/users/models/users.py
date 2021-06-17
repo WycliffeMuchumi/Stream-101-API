@@ -9,9 +9,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.String(100), nullable = False)
     lastName = db.Column(db.String(100), nullable = False)
-    userName = db.Column(db.String(50), unique = True, nullable = False)
+    userName = db.Column(db.String(50), nullable = False)
     email = db.Column(db.String(200),unique = True, nullable = False)
-    phoneNumber = db.Column(db.String, unique = True, nullable = False)
+    phoneNumber = db.Column(db.String, nullable = False)
     password = db.Column(db.String(256), nullable = False)
 
     def __init__(self, firstName, lastName, userName, email, 
