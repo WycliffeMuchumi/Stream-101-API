@@ -37,7 +37,7 @@ def register_blueprint(app):
     for blueprint in blueprints:
         module = import_module(f'app.api.{blueprint}')
         app.register_blueprint(module.blueprint)
-        print("==> blueprint for {} is registered !".format(blueprint))
+        # print("==> blueprint for {} is registered !".format(blueprint))
 
 """
     Creating our client vaults
@@ -63,7 +63,7 @@ def configure_database(app):
         # db.drop_all()
         User.metadata.create_all(bind=db.engine)
         # Generating the number of records we want for our fake_data function
-        fake_data(100)
+        # fake_data(100)
 
 """
     Creating Our Application Factory
