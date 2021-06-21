@@ -11,21 +11,20 @@ from app import db
 
 api = Api(blueprint)
 
-@blueprint.route('/', methods=['GET'])
-def index():
-    make_response = {
-        "Message": "Hello There, Welcome to STREAM-101-API Users page !",
-        "Status": "Successful"
+@blueprint.route('/gender', methods=['GET'])
+def gender():
+    gender = {
+        1: "Male",
+        2: "Female",
+        3: "Transgender"
     }
-    return jsonify(make_response), 200
+    return jsonify(gender), 200
 
 """
     Users Resource
 """
 class Users(Resource):
-    def get(self, id=None):
-        pass
-
+    # post method
     def post(self):
         data = request.get_json()
         firstName = data.get('firstName')
@@ -47,7 +46,16 @@ class Users(Resource):
         finally:
             db.session.close()
 
+    # get all users and get user by id method
+    def get(self, id=None):
+        if id is None:
+            users = User.query.all()
+            return users_schema.dump(users), 200
+        else:
+            user = User.query.get(id)
+            return user_schema.dump(user), 200
 
 
-api.add_resource(Users, '/', methods=['GET', 'POST'], endpoint='users')
+
+api.add_resource(Users, '/', methods=['GET', 'POST'], endpoint='users_index')
 api.add_resource(Users, '/<id>', methods=['GET', 'PUT', 'DELETE'], endpoint='user')
