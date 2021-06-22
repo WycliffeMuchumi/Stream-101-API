@@ -37,7 +37,7 @@ def register_blueprint(app):
     for blueprint in blueprints:
         module = import_module(f'app.api.{blueprint}')
         app.register_blueprint(module.blueprint)
-        # print("==> blueprint for {} is registered !".format(blueprint))
+        print("==> blueprint for {} is registered !".format(blueprint))
 
 """
     Creating our client vaults
