@@ -17,10 +17,11 @@ def fake_data(number_of_records):
         firstName, lastName = fullName.split(" ", 1)
         userName = fake.name()
         email = fake.email()
+        phoneNumber = fake.phone_number()
         password = fake.password()
 
         fake_user = User(firstName=firstName, lastName=lastName, userName=userName,
-                    email=email, phoneNumber='', password=password)
+                    email=email, phoneNumber=phoneNumber, password=password)
         db.session.add(fake_user)
         db.session.commit()
 
