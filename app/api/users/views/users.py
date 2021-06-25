@@ -24,7 +24,7 @@ def get_user(id):
         return user_schema.dump(user), 200
     else:
         make_response={
-            "msg": "error, a user with that id does not exist"
+            "msg": "error, that user does not exist"
         }
         return jsonify(make_response), 404
 
@@ -113,8 +113,6 @@ def delete_user(id):
         db.session.close()
 
     
-
-
 """
     Searching a user by his/her username
 """

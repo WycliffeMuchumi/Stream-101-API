@@ -1,4 +1,5 @@
 from app import db, bcrypt, ma
+from app.api.videos.models.videos import Video
 
 
 """
@@ -13,6 +14,7 @@ class User(db.Model):
     email = db.Column(db.String(200),unique = True, nullable = False)
     phoneNumber = db.Column(db.String, nullable = False)
     password = db.Column(db.String(256), nullable = False)
+    video = db.relationship('Video', backref = 'author', lazy = True)
 
     def __init__(self, firstName, lastName, userName, email, 
     phoneNumber, password):
