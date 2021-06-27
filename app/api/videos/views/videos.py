@@ -36,18 +36,44 @@ def post():
     description = data.get('description')
     video_content = data.get('video_content')
 
-    video = Video(title = title, description = description, video_content=video_content)
-    db.session.add(video)
+    new_video = Video(title = title, description = description, video_content=video_content)
+    db.session.add(new_video)
+    try:
+        db.session.commit()
+        return video_schema.dump(new_video), 201
+    except:
+        db.session.rollback()
+        make_response={
+            "msg": "error, a video by that description already exists"
+        }
+        return jsonify(make_response), 409
+    finally:
+        db.session.close()
+
+"""
+    Edit a video
+"""
+@videos.route('/edit_video/<int:id>', methods=['PUT'])
+def edit_video(id):
+    video = Video.query.get(id)
+
+    data = request.get_json()
+    title = data.get('title')
+    description = data.get('description')
+    video_content = data.get('video_content')
+
+    video.title = title
+    video.description = description
+    video.video_content = video_content
+
     try:
         db.session.commit()
         return video_schema.dump(video), 201
     except:
         db.session.rollback()
         make_response={
-            "msg": "error, a video by that title already exists"
+            "msg": "error, unable to update this record"
         }
-        return jsonify(make_response), 409
+        return jsonify(make_response), 400
     finally:
         db.session.close()
-
-

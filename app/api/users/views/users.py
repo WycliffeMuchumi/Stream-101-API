@@ -84,6 +84,7 @@ def edit_user(id):
         db.session.commit()
         return user_schema.dump(user), 201
     except:
+        db.session.rollback()
         make_response={
             "msg": "error, unable to update this record"
         }
@@ -105,6 +106,7 @@ def delete_user(id):
         }
         return jsonify(make_response), 200
     except:
+        db.session.rollback()
         make_response={
             "msg": "error, check your connection"
         }
