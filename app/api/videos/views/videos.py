@@ -72,8 +72,29 @@ def edit_video(id):
     except:
         db.session.rollback()
         make_response={
-            "msg": "error, unable to update this record"
+            "msg": "error, unable to update this video"
         }
         return jsonify(make_response), 400
+    finally:
+        db.session.close()
+
+"""
+    Delete a video
+"""
+@videos.route('/delete_video/<int:id>', methods=['DELETE'])
+def delete_video(id):
+    video = Video.query.get(id)
+    try:
+        db.session.delete(video)
+        make_response={
+            "msg": "video record deleted successfully"
+        }
+        return jsonify(make_response), 200
+    except:
+        db.session.rollback()
+        make_response={
+            "msg": "error, check your connection"
+        }
+        return jsonify(make_response), 502
     finally:
         db.session.close()

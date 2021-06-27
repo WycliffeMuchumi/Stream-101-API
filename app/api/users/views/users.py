@@ -86,7 +86,7 @@ def edit_user(id):
     except:
         db.session.rollback()
         make_response={
-            "msg": "error, unable to update this record"
+            "msg": "error, unable to update this user's record"
         }
         return jsonify(make_response), 400
     finally:
