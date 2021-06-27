@@ -27,7 +27,7 @@ class Video(db.Model):
 """
 class VideoSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'title', 'description', 'video_content') 
+        fields = ('id','title','description','video_content') 
 
 
 """
