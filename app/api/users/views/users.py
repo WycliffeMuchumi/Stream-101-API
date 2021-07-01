@@ -1,7 +1,9 @@
+from utils.validations import validate_users_key_pair_values
 from flask import jsonify, request
 from flask.helpers import make_response
 from app.api.users import blueprint as users
 from app.api.users.models.users import User, user_schema, users_schema
+from utils.validations import validate_users_key_pair_values, error, check_for_blanks, check_for_non_strings
 from app import db
 
 
@@ -34,7 +36,18 @@ def get_user(id):
 """
 @users.route('/signup', methods=['POST'])
 def post():
+
+    if validate_users_key_pair_values(request):
+        return error(400, "{} key missing".format(', '.join(validate_users_key_pair_values(request))))
+
     data = request.get_json()
+
+    if check_for_blanks(data):
+        return error(400, "{} cannot be blank".format(', '.join(check_for_blanks(data))))
+
+    if check_for_non_strings(data):
+        return error(400, "{} must be a string".format(', '.join(check_for_non_strings(data))))
+
     firstName = data.get('firstName')
     lastName = data.get('lastName')
     userName = data.get('userName')
