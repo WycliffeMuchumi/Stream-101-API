@@ -1,7 +1,8 @@
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from flask.helpers import make_response
 from app.api.videos import blueprint as videos
 from app.api.videos.models.videos import Video, video_schema, videos_schema
+from utils.validations import validate_videos_key_pair_values, check_for_blanks, check_for_non_strings
 from app import db
 
 """
@@ -17,6 +18,8 @@ def get():
 """
 @videos.route('/video/<int:id>', methods = ['GET'])
 def get_video(id):
+    if id <= 0:
+        return abort(400, "Invalid id format")   
     video = Video.query.get(id)
     if video:
         return video_schema.dump(video), 200
@@ -31,7 +34,17 @@ def get_video(id):
 """
 @videos.route('/post_video', methods = ['POST'])
 def post():
+    if validate_videos_key_pair_values(request):
+        return abort(400, "{} key missing".format(', '.join(validate_videos_key_pair_values(request))))
+
     data = request.get_json()
+
+    if check_for_blanks(data):
+        return abort(400, "{} cannot be blank".format(', '.join(check_for_blanks(data))))
+
+    if check_for_non_strings(data):
+        return abort(400, "{} must be a string".format(', '.join(check_for_non_strings(data))))
+        
     title = data.get('title')
     description = data.get('description')
     video_content = data.get('video_content')
