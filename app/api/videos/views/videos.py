@@ -70,7 +70,17 @@ def post():
 def edit_video(id):
     video = Video.query.get(id)
 
+    if validate_videos_key_pair_values(request):
+        return abort(400, "{} key missing".format(', '.join(validate_videos_key_pair_values(request))))
+
     data = request.get_json()
+
+    if check_for_blanks(data):
+        return abort(400, "{} cannot be blank".format(', '.join(check_for_blanks(data))))
+
+    if check_for_non_strings(data):
+        return abort(400, "{} must be a string".format(', '.join(check_for_non_strings(data))))
+
     title = data.get('title')
     description = data.get('description')
     video_content = data.get('video_content')
@@ -96,6 +106,8 @@ def edit_video(id):
 """
 @videos.route('/delete_video/<int:id>', methods=['DELETE'])
 def delete_video(id):
+    if id < 0:
+        return abort(400, "Invalid id format")
     video = Video.query.get(id)
     try:
         db.session.delete(video)
